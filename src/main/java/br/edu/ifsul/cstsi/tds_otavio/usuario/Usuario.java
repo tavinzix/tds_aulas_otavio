@@ -1,4 +1,7 @@
-package br.edu.ifsul.cstsi.tds_otavio.model;
+package br.edu.ifsul.cstsi.tds_otavio.usuario;
+import br.edu.ifsul.cstsi.tds_otavio.endereco.Endereco;
+import br.edu.ifsul.cstsi.tds_otavio.formaPagamento.FormaPagamento;
+import br.edu.ifsul.cstsi.tds_otavio.pedido.Pedido;
 import jakarta.persistence.*;
 import java.util.Collection;
 

@@ -1,4 +1,6 @@
-package br.edu.ifsul.cstsi.tds_otavio.model;
+package br.edu.ifsul.cstsi.tds_otavio.pedidoItem;
+import br.edu.ifsul.cstsi.tds_otavio.produto.Produto;
+import br.edu.ifsul.cstsi.tds_otavio.pedido.Pedido;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 

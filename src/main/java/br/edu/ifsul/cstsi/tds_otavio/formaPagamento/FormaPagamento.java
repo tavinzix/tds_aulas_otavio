@@ -1,7 +1,7 @@
-package br.edu.ifsul.cstsi.tds_otavio.model;
+package br.edu.ifsul.cstsi.tds_otavio.formaPagamento;
+import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 @Entity
 public class FormaPagamento {
     @Id
