@@ -11,8 +11,6 @@ public class PedidoItem {
     private Long id;
     private BigDecimal quantidade;
     private BigDecimal precoUnitario;
-    private Boolean status;
-
     //Associações
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pedido_id", referencedColumnName = "id",nullable = false)
