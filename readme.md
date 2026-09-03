@@ -30,7 +30,7 @@ Classe responsável pelas informações dos endereços do usuario\
 `Boolean status - endereço ativo/inativo`
 
 ## Produto
-Classe responsável pelas informações dos produtos
+Classe responsável pelas informações dos produtos\
 `Long id - identificação única do produto`\
 `String nomeProduto - nome do produto`\
 `BigDecimal estoque - estoque do produto`\

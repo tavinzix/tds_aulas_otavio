@@ -9,7 +9,7 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long nomeProduto;
+    private String nomeProduto;
     private BigDecimal estoque;
     private BigDecimal precoUnitario;
     private Boolean status;
