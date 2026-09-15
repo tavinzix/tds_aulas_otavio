@@ -3,9 +3,18 @@ import br.edu.ifsul.cstsi.tds_otavio.endereco.Endereco;
 import br.edu.ifsul.cstsi.tds_otavio.formaPagamento.FormaPagamento;
 import br.edu.ifsul.cstsi.tds_otavio.pedido.Pedido;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Collection;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

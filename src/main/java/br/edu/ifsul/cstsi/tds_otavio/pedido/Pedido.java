@@ -4,10 +4,19 @@ import br.edu.ifsul.cstsi.tds_otavio.formaPagamento.FormaPagamento;
 import br.edu.ifsul.cstsi.tds_otavio.pedidoItem.PedidoItem;
 import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.Collection;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

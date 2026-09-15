@@ -1,8 +1,16 @@
 package br.edu.ifsul.cstsi.tds_otavio.formaPagamento;
 import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class FormaPagamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
