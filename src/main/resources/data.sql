@@ -1,9 +1,9 @@
 -- Usuário
 INSERT INTO usuario (id, nome_completo, email, cpf, senha)
 VALUES
-    (1, 'João Silva', 'joao.silva@email.com', '12345678901', 'senha123'),
-    (2, 'Maria Oliveira', 'maria.oliveira@email.com', '98765432100', 'senha456'),
-    (3, 'Carlos Souza', 'carlos.souza@email.com', '11122233344', 'senha789');
+    (1, 'João Silva', 'joao.silva@email.com', '12345678901', '$2a$10$RDo0Ut3Ea6N8yyy17H71Ue//6XRSfNbeBMUI9YyJPLBNZcuzb9Yp6'),
+    (2, 'Maria Oliveira', 'maria.oliveira@email.com', '98765432100', '$2a$10$RDo0Ut3Ea6N8yyy17H71Ue//6XRSfNbeBMUI9YyJPLBNZcuzb9Yp6'),
+    (3, 'Carlos Souza', 'carlos.souza@email.com', '11122233344', '$2a$10$RDo0Ut3Ea6N8yyy17H71Ue//6XRSfNbeBMUI9YyJPLBNZcuzb9Yp6');
 
 -- FormaPagamento
 INSERT INTO forma_pagamento (id, nome_cartao, titular_cartao, numero_cartao, status, usuario_id)
@@ -36,3 +36,12 @@ INSERT INTO pedido_item (id, quantidade, preco_unitario, pedido_id, produto_id)
 VALUES  (1, 1, 3500.00, 1, 1),
         (2, 1, 2500.00, 2, 2),
         (3, 3, 150.00, 3, 3);
+
+INSERT INTO perfis (id, nome)
+VALUES (1, 'ROLE_ADMIN'),
+       (2, 'ROLE_USER');
+
+INSERT INTO usuarios_perfis (usuarios_id, perfis_id)
+VALUES  (1, 1),
+        (2, 2),
+        (3, 2);
