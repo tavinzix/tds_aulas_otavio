@@ -1,5 +1,9 @@
 package br.edu.ifsul.cstsi.tds_otavio.autenticacao;
 
+import br.edu.ifsul.cstsi.tds_otavio.infra.jwt.TokenJwtDto;
+import br.edu.ifsul.cstsi.tds_otavio.infra.jwt.TokenService;
+import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,17 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticacaoController {
 
     private final AuthenticationManager manager;
+    private final TokenService tokenService;
 
     //injeção de dependências
-    public AutenticacaoController(AuthenticationManager manager) {
+    public AutenticacaoController(AuthenticationManager manager, TokenService tokenService) {
         this.manager = manager;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> efetuaLogin(@RequestBody UsuarioAutenticacaoDTO data) {
+    public ResponseEntity<TokenJwtDto> efetuaLogin(@Valid @RequestBody UsuarioAutenticacaoDTO data) {
         var authenticationDTO = new UsernamePasswordAuthenticationToken(data.cpf(), data.senha()); //converte o DTO em DTO do Spring Security
 
-        var authentication = manager.authenticate(authenticationDTO); //autentica o usuário (chama implicitamente loadUserByUsername da service)
-        return ResponseEntity.ok("autenticou " + authentication.getPrincipal());
+        var authentication = manager.authenticate(authenticationDTO); //autentica o usuário (esse objeto contém o usuário e a senha)
+        var tokenJWT = tokenService.geraToken((Usuario) authentication.getPrincipal()); //gera o token JWT para enviar na response
+        return ResponseEntity.ok(new TokenJwtDto(tokenJWT)); //envia a response com o token JWT
     }
 }

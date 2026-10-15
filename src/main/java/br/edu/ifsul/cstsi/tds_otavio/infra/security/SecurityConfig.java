@@ -2,6 +2,7 @@ package br.edu.ifsul.cstsi.tds_otavio.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import br.edu.ifsul.cstsi.tds_otavio.infra.jwt.CustomJwtAuthenticationConverter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -26,6 +27,13 @@ import static org.springframework.security.authorization.SingleResultAuthorizati
 
 public class SecurityConfig {
 
+    private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+
+    public SecurityConfig(CustomJwtAuthenticationConverter customJwtAuthenticationConverter) {
+        this.customJwtAuthenticationConverter = customJwtAuthenticationConverter;
+    }
+
+
     @Bean //injeta no Context do app o gerenciador de autenticação
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
@@ -39,30 +47,32 @@ public class SecurityConfig {
     @Bean //personaliza as configurações da cadeia de filtros (lembre que o starter já pré-configurou)
     public SecurityFilterChain filterChain(HttpSecurity http) {
 
-        //Basic Authentication
+        PathPatternRequestMatcher.Builder path = PathPatternRequestMatcher.withDefaults();
+
+        //Configuração JWT Authentication
         http
-                .csrf(csrf -> csrf.disable()) //desabilita a proteção contra ataques Cross-site Request Forger
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers(HttpMethod.POST, "/api/v1/autenticacao/login").permitAll(); //exceto, a rota de login
+                .csrf(csrf -> csrf.disable()) //desabilita a proteção contra ataques Cross-site Request Forger, comum em conexões Stateless
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //sem sessão (desabilita o stateful)
+                .authorizeHttpRequests(authorize -> {  //configurar a autorização
+                    authorize.requestMatchers(
+                            path.matcher("/v3/api-docs/**"),
+                            path.matcher("/swagger-ui.html"),
+                            path.matcher("/swagger-ui/**"),
+                            // Capstone MCP: libera o handshake/endpoint do servidor MCP. Simplificação
+                            // pedagógica (ambiente de sala de aula) — em produção, a especificação do MCP
+                            // recomenda OAuth2 para servidores expostos via HTTP (ver módulo mcp-server-security
+                            // do Spring AI, que se apoiaria no mesmo Resource Server/JWT que já está configurado aqui).
+                            path.matcher("/mcp/**")
+                    ).permitAll(); //exceto, a rota de documentação (para doc em html no navegador)
+                    authorize.requestMatchers(path.matcher(HttpMethod.POST, "/api/v1/autenticacao/login")).permitAll(); //exceto, a rota de login
                     authorize.anyRequest().authenticated(); //demais rotas devem ser autenticadas
                 })
-                .httpBasic(Customizer.withDefaults());
+                // Habilita o Resource Server nativo do Spring Security: ele registra o próprio filtro que lê o header Authorization,
+                // valida o JWT (via o bean JwtDecoder, ver JwtConfig) e monta a Authentication (via o CustomJwtAuthenticationConverter, que busca o Cliente (usuário) no banco).
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter))
+                );
 
         return http.build();
     }
-
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-//        UserDetails user = User.withUsername("user")
-//                .password(passwordEncoder.encode("user"))
-//                .roles("USER")
-//                .build();
-//
-//        UserDetails admin = User.withUsername("admin")
-//                .password(passwordEncoder.encode("admin"))
-//                .roles("USER", "ADMIN")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user, admin);
-//    }
 }
