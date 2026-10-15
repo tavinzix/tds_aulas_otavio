@@ -1,6 +1,8 @@
 package br.edu.ifsul.cstsi.tds_otavio.endereco;
 
 import br.edu.ifsul.cstsi.tds_otavio.produto.Produto;
+import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
+import br.edu.ifsul.cstsi.tds_otavio.usuario.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,11 @@ import java.util.List;
 public class EnderecoController {
 
     private final EnderecoRepository enderecoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public EnderecoController(EnderecoRepository enderecoRepository){
+    public EnderecoController(EnderecoRepository enderecoRepository, UsuarioRepository usuarioRepository){
         this.enderecoRepository = enderecoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
@@ -44,9 +48,24 @@ public class EnderecoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> insert (@RequestBody Endereco endereco, UriComponentsBuilder uriBuilder){
-        var e = enderecoRepository.save(endereco);
-        URI location = uriBuilder.path("api/v1/produtos/{id}").buildAndExpand(e.getId()).toUri();
+    public ResponseEntity<Void> insert(@Valid @RequestBody EnderecoDto enderecoDto, UriComponentsBuilder uriBuilder) {
+        var usuario = usuarioRepository.findById(enderecoDto.usuario());
+
+        var endereco = new Endereco(
+                null,
+                enderecoDto.cep(),
+                enderecoDto.estado(),
+                enderecoDto.cidade(),
+                enderecoDto.bairro(),
+                enderecoDto.rua(),
+                enderecoDto.numero(),
+                enderecoDto.complemento(),
+                enderecoDto.status(),
+                usuario.get()
+        );
+
+        var enderecoSalvo = enderecoRepository.save(endereco);
+        URI location = uriBuilder.path("/api/v1/enderecos/{id}").buildAndExpand(enderecoSalvo.getId()).toUri();
         return ResponseEntity.created(location).build();
     }
 

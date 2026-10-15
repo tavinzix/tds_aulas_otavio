@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tds_otavio.endereco;
 
+import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

@@ -84,6 +84,6 @@ public class Usuario implements UserDetails {
 
     public static void main(String[] args) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("123"));
+        System.out.println(encoder.encode("Senha@123"));
     }
 }

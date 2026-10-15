@@ -1,9 +1,9 @@
 -- Usuário
 INSERT INTO usuario (id, nome_completo, email, cpf, senha)
 VALUES
-    (1, 'João Silva', 'joao.silva@email.com', '12345678901', '$2a$10$RDo0Ut3Ea6N8yyy17H71Ue//6XRSfNbeBMUI9YyJPLBNZcuzb9Yp6'),
-    (2, 'Maria Oliveira', 'maria.oliveira@email.com', '98765432100', '$2a$10$RDo0Ut3Ea6N8yyy17H71Ue//6XRSfNbeBMUI9YyJPLBNZcuzb9Yp6'),
-    (3, 'Carlos Souza', 'carlos.souza@email.com', '11122233344', '$2a$10$RDo0Ut3Ea6N8yyy17H71Ue//6XRSfNbeBMUI9YyJPLBNZcuzb9Yp6');
+    (1, 'João Silva', 'joao.silva@email.com', '12345678901', '$2a$10$VDIdQHkady8ufOOf9W5IMen7Q/Fa0BCQ.2WweaiH2FmYxLZgjoaCm'),
+    (2, 'Maria Oliveira', 'maria.oliveira@email.com', '98765432100', '$2a$10$VDIdQHkady8ufOOf9W5IMen7Q/Fa0BCQ.2WweaiH2FmYxLZgjoaCm'),
+    (3, 'Carlos Souza', 'carlos.souza@email.com', '11122233344', '$2a$10$VDIdQHkady8ufOOf9W5IMen7Q/Fa0BCQ.2WweaiH2FmYxLZgjoaCm');
 
 -- FormaPagamento
 INSERT INTO forma_pagamento (id, nome_cartao, titular_cartao, numero_cartao, status, usuario_id)
