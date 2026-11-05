@@ -30,8 +30,8 @@ class SecurityConfigTest {
         //ARRANGE
         var json = """
                 {
-                  "email": "admin@email.com",
-                  "senha": "Teste12@"
+                  "cpf": "12345678901",
+                  "senha": "Senha@123"
                 }
                 """;
         var url = "/api/v1/autenticacao/login";

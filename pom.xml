@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.edu.ifsul.cstsi</groupId>
     <artifactId>tds_otavio</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>tds_otavio</name>
     <description>tds_otavio</description>
     <url/>
