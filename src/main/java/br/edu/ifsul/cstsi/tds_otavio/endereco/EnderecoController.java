@@ -43,8 +43,10 @@ public class EnderecoController {
     }
 
     @GetMapping("/cep/{cep}")
-    public ResponseEntity<List<Endereco>> findByCep(@PathVariable(value = "cep") String cep){
-        return  ResponseEntity.ok(enderecoRepository.findByCepQuerySpeakSQL(cep).get());
+    public ResponseEntity<List<EnderecoDto>> findByCep(@PathVariable String cep) {
+        return ResponseEntity.ok(
+                enderecoRepository.findByCepQuerySpeakSQL(cep).get().stream().map(EnderecoDto::new).toList()
+        );
     }
 
     @PostMapping
@@ -70,14 +72,35 @@ public class EnderecoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Endereco endereco, UriComponentsBuilder uriBuilder) {
-        if (!enderecoRepository.existsById(id)) {
+    public ResponseEntity<EnderecoDto> update(
+            @PathVariable Long id,
+            @Valid @RequestBody EnderecoDto enderecoDto) {
+
+        var endereco = enderecoRepository.findById(id);
+
+        if (endereco.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        endereco.setId(id);
-        enderecoRepository.save(endereco);
-        URI location = uriBuilder.path("api/v1/enderecos/{id}").buildAndExpand(id).toUri();
-        return ResponseEntity.ok("Endereço atualizado com sucesso");
+
+        var usuario = usuarioRepository.findById(enderecoDto.usuario());
+
+        if (usuario.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var e = endereco.get();
+
+        e.setCep(enderecoDto.cep());
+        e.setEstado(enderecoDto.estado());
+        e.setCidade(enderecoDto.cidade());
+        e.setBairro(enderecoDto.bairro());
+        e.setRua(enderecoDto.rua());
+        e.setNumero(enderecoDto.numero());
+        e.setComplemento(enderecoDto.complemento());
+        e.setStatus(enderecoDto.status());
+        e.setUsuario(usuario.get());
+
+        return ResponseEntity.ok(new EnderecoDto(enderecoRepository.save(e)));
     }
 
     @DeleteMapping("/{id}")

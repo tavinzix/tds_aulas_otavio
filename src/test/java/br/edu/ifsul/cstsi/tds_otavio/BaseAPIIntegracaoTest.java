@@ -1,0 +1,99 @@
+package br.edu.ifsul.cstsi.tds_otavio;
+
+import br.edu.ifsul.cstsi.tds_otavio.autenticacao.AutenticacaoService;
+import br.edu.ifsul.cstsi.tds_otavio.usuario.Usuario;
+import br.edu.ifsul.cstsi.tds_otavio.infra.jwt.TokenService;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpMethod.*;
+
+/*
+    Esta é a superclasse para os testes dos controllers. Ela é baseada na classe TestRestTemplate (do Spring),
+    que oferece ferramentas para chamadas HTTP em APIs reais. É por isso que a classe está marcada com
+    @SpringBootTest e suas personalizações.
+    Ela pode ser reutilizada para ralizar teste de integração de qualquer um dos controllers do projeto.
+
+    A partir do Spring Boot 4, o @SpringBootTest não injeta mais o TestRestTemplate automaticamente:
+    é preciso declarar @AutoConfigureTestRestTemplate explicitamente (e ter as dependências
+    spring-boot-restclient / spring-boot-resttestclient no pom.xml).
+ */
+
+@SpringBootTest(classes = TdsOtavioApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) //indica que vai rodar o teste no container Spring Boot
+@AutoConfigureTestRestTemplate
+public abstract class BaseAPIIntegracaoTest {
+    @Autowired //injeta a dependência a partir do Context do app
+    protected TestRestTemplate rest; //faz chamadas para APIs reais, no caso, os controllers construídos por você
+    @Autowired //injeta a dependência a partir do Context do app
+    private AutenticacaoService service;
+    @Autowired //injeta a dependência a partir do Context do app
+    private TokenService tokenService;
+
+    private String jwtToken = "";
+
+
+    //Método para logar um usuário e obter o token
+    @BeforeEach //essa anotação faz com que o método seja executado antes dos demais, no setup
+    public void setupTest() {
+        loginComo("12345678901"); //note que, por padrão, os testes passam com o perfil "admin"
+    }
+
+    /*
+        Troca o usuário dos próximos requests do teste (gera o token sem passar pela rota de login).
+        Útil para testar regras que dependem de QUEM faz a requisição, ex.: um cliente tentando ver o pedido de outro.
+     */
+    protected void loginComo(String cpf) {
+        // Le usuário
+        Usuario user = (Usuario) service.loadUserByUsername(cpf);
+        assertNotNull(user);
+
+        // Gera token
+        jwtToken = tokenService.geraToken(user);
+        assertNotNull(jwtToken);
+    }
+
+    //Método utilitário para montar o header da requisição
+    protected HttpHeaders getHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        return headers;
+    }
+
+    //Método genérico para requisições com o verbo POST
+    protected  <T> ResponseEntity<T> post(String url, Object body, Class<T> responseType) {
+        HttpHeaders headers = getHeaders();
+
+        return rest.exchange(url, POST, new HttpEntity<>(body, headers), responseType);
+    }
+
+    //Método genérico para requisições com o verbo PUT
+    protected <T> ResponseEntity<T> put(String url, Object body, Class<T> responseType) {
+        HttpHeaders headers = getHeaders();
+
+        return rest.exchange(url, PUT, new HttpEntity<>(body, headers), responseType);
+    }
+
+    //Método genérico para requisições com o verbo GET
+    protected <T> ResponseEntity<T> get(String url, Class<T> responseType) {
+
+        HttpHeaders headers = getHeaders();
+
+        return rest.exchange(url, GET, new HttpEntity<>(headers), responseType);
+    }
+
+    //Método genérico para requisições com o verbo DELETE
+    protected <T> ResponseEntity<T> delete(String url, Class<T> responseType) {
+
+        HttpHeaders headers = getHeaders();
+
+        return rest.exchange(url, DELETE, new HttpEntity<>(headers), responseType);
+    }
+}
